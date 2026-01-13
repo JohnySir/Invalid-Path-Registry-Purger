@@ -1,0 +1,4 @@
+customtkinter>=5.0.0
+darkdetect
+packaging
+pillow
