@@ -1,4 +1,4 @@
-# 🧹 Uninstall Cleaner
+# 🗑️ Invalid Path Registry Purger
 
 <div align="center">
 
@@ -6,9 +6,9 @@
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-**A modern, safe, and powerful utility to remove "Ghost" entries from your Windows Installed Apps list.**
+**A specialized system utility that identifies and removes orphaned ARP (Add/Remove Programs) registry entries pointing to non-existent file paths.**
 
-[Features](#-features) • [Installation](#-installation) • [Usage](#-usage) • [Safety](#-safety-first)
+[Technical Overview](#-technical-overview) • [Installation](#-installation) • [Usage](#-usage) • [Safety Architecture](#-safety-architecture)
 
 </div>
 
@@ -16,20 +16,21 @@
 
 ## 🧐 What is this?
 
-Have you ever manually deleted a program folder, only to find it still lurking in your Windows "Add or Remove Programs" list? Or had an uninstaller fail, leaving a broken entry behind?
+When software is manually deleted or an uninstallation fails, the Windows Registry often retains a record of the application in the **"Installed Apps"** list. In database terms, these are **"Orphaned Records"**—registry keys that point to an **Invalid Path**.
 
-**Uninstall Cleaner** is the solution. It detects these **"Ghost"** entries—registry records pointing to files that no longer exist—and helps you remove them safely.
+**Invalid Path Registry Purger** scans the `HKLM` and `HKCU` uninstall keys, verifies the existence of `InstallLocation` and `UninstallString` paths, and allows for the safe removal of these dead entries.
 
-## ✨ Features
+## ⚙️ Technical Overview
 
-*   **👻 Ghost Detection Engine**: Automatically scans your registry and identifies programs missing their installation files or uninstallers.
-*   **🛡️ Safety First**: 
-    *   **Auto-Backup**: Every removal triggers an automatic `.reg` file backup.
-    *   **Undo History**: Made a mistake? Restore deleted entries instantly from the app.
-*   **⚠️ Force Remove**: (Advanced) Clean up valid but stubborn entries that standard uninstallers can't remove.
-*   **🔍 Smart Search**: Real-time filtering with a smooth, optimized UI (debounced for performance).
-*   **🌗 Modern UI**: Built with `customtkinter` for a native Windows 11-style look with Dark Mode support.
-*   **🛡️ System Protection**: Automatically hides critical system components and hardware drivers (HAL) to prevent accidental damage.
+*   **🔍 Path Integrity Scan**: validates registry keys against the filesystem.
+    *   Checks `InstallLocation` for directory existence.
+    *   Parses and verifies `UninstallString` executables.
+*   **🛡️ Registry Safety Layer**: 
+    *   **Atomic Backups**: Automatically exports the target registry subkey to a `.reg` file before deletion.
+    *   **Restore Capability**: Built-in history viewer to re-import deleted keys via `reg import`.
+*   **⚠️ Force Purge**: (Advanced) Allows override for valid entries, removing the registry reference without triggering the uninstaller (useful for broken installers).
+*   **🚫 System Protection**: Hard-coded exclusions for `SystemComponent` flags and HAL (Hardware Abstraction Layer) drivers to prevent OS destabilization.
+*   **⚡ Optimized UI**: High-performance, debounced search filtering capable of handling large registry datasets.
 
 ## 🚀 Installation
 
@@ -40,8 +41,8 @@ Have you ever manually deleted a program folder, only to find it still lurking i
 ### Setup
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/uninstall-cleaner.git
-    cd uninstall-cleaner
+    git clone https://github.com/yourusername/invalid-path-registry-purger.git
+    cd invalid-path-registry-purger
     ```
 
 2.  **Install dependencies**:
@@ -55,32 +56,32 @@ Have you ever manually deleted a program folder, only to find it still lurking i
     ```bash
     python main.py
     ```
-    *Note: The app will request **Administrator privileges**. This is required to modify the Windows Registry (HKLM).*
+    *Note: The process will auto-request **Administrator privileges** via UAC to access HKLM registry hives.*
 
-2.  **Scan & Clean**:
-    *   The app launches and scans for installed software.
-    *   **Red items** are "Ghosts" (broken).
-    *   **Green items** are Valid (installed).
-    *   Click **"Remove"** on a Ghost to clean it up.
+2.  **Scan & Purge**:
+    *   **Red Entries**: Identified as **"Ghosts"** (Invalid Path). Safe to remove.
+    *   **Green Entries**: Valid installations.
+    *   **Orange Entries**: System/Protected components (Hidden by default).
 
-3.  **Advanced Options**:
-    *   Toggle **"Ghosts Only"** in the sidebar to filter the list.
-    *   Use **"Force Del"** on valid apps (Proceed with caution! This removes the registry entry, not the files).
+3.  **Advanced Operations**:
+    *   **"Ghosts Only" Mode**: Toggle to filter the view to only show integrity violations.
+    *   **Force Del**: Bypass safety checks to remove a valid entry (Registry Only). *Use with caution.*
 
-## 🛡️ Safety First
+## 🛡️ Safety Architecture
 
-We take system stability seriously:
-1.  **Backups**: Before *any* deletion, a backup is saved to the `backups/` folder.
-2.  **Filtering**: Critical system components and drivers (e.g., "Hardware Abstraction Layer") are hidden from the list.
-3.  **Confirmation**: You will always be asked to confirm before any action is taken.
+This tool operates on the principle of **Non-Destructive Filesystem Operations**:
+1.  **Registry Only**: It never deletes program files, only the registry pointers.
+2.  **Backup-First Logic**: Deletion operations are blocked until a backup verification passes.
+3.  **HAL/Kernel Protection**: Logic explicitly ignores strings containing "Hardware Abstraction Layer" to prevent driver corruption.
 
 ## 🤝 Contributing
 
-Contributions are welcome!
+Pull requests are welcome. For major changes, please open an issue first to discuss the proposed logic modification.
+
 1.  Fork the project
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4.  Push to the branch (`git push origin feature/AmazingFeature`)
+2.  Create your feature branch (`git checkout -b fix/registry-logic`)
+3.  Commit your changes (`git commit -m 'Refactor scanning algorithm'`)
+4.  Push to the branch (`git push origin fix/registry-logic`)
 5.  Open a Pull Request
 
 ## 📄 License
@@ -89,5 +90,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 <div align="center">
-Made with ❤️ for Windows
+<i>"Clean Registry, Stable System."</i>
 </div>
